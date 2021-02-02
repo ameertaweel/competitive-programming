@@ -1,7 +1,6 @@
 #include <iostream>
 #include <vector>
 #include <queue>
-#include <map>
 
 using namespace std;
 
@@ -23,6 +22,11 @@ int main(){
 	long K;
 	cin >> K;
 
+	if(K == 1){
+		cout << 1;
+		return 0;
+	}
+
 	vector<long> importantVerticesIndexes(K);
 	for(auto& c : importantVerticesIndexes){
 		cin >> c;
@@ -30,18 +34,18 @@ int main(){
 	}
 
 	// Use breadth search first to build find the distances
-	vector<vector<long>> distanceMatrix(K, vector<long>(K, 0));
+	vector<vector<long>> distanceMatrix(K, vector<long>(K));
 
 	for(long i = 0; i < K; i++){
 		// Distances from each important vertex
-		vector<long> dist(N, N);
+		vector<long> dist(N, (N * K));
 
 		auto vertexIndex = importantVerticesIndexes[i];
 		auto vertex = graph[vertexIndex];
 
 		dist[vertexIndex] = 0;
 
-		queue<int> verticesToTraverse;
+		queue<long> verticesToTraverse;
 		verticesToTraverse.push(vertexIndex);
 
 		while(!verticesToTraverse.empty()){
@@ -50,7 +54,7 @@ int main(){
 			verticesToTraverse.pop();
 
 			for(auto connected : v){
-				if(dist[connected] > dist[vertexIndex] + 1){
+				if(dist[connected] > dist[vi] + 1){
 					verticesToTraverse.push(connected);
 					dist[connected] = dist[vi] + 1;
 				}
@@ -62,13 +66,47 @@ int main(){
 		}
 	}
 
-	// TODO: Remove
-	for(auto i : distanceMatrix){
-		for(auto j : i){
-			cout << j << " ";
-		}
-		cout << endl;
+	// Use Dynamic Programming (DP) and Bitmasks to find the shortest path, if exists
+	// N * K here is infinity, because a real path can't be that long
+	vector<vector<long>> dp(1 << K, vector<long>(K, N * K));
+
+	// We do not care about the bitmask 0^K (where ^ means repetition), so we start enumerating from 1
+	// Initialize the states 2^i for i between 0 and K - 1 to be 1 (because we only added one stone so far)
+	for(long i = 0; i < K; i++){
+		dp[1 << i][K - i - 1] = 1;
 	}
+
+	// Calculate the rest of the paths (permutations)
+	// The - 1 in (1 << K) - 1 is because we do not need to loop over the mask 1*K (where ^ means repetition)
+	for(long mask = 1; mask < (1 << K) - 1; mask++){
+		// Loop over the mask and find all possible last elements (if the bit is set (equal to 1))
+		for(long last = 0; last < K; last++){
+			long lastMask = 1 << (K - last - 1);
+			// Skip if the bit is 0
+			if(!(mask & lastMask)) continue;
+			// Loop over all the possible continuations
+			for(long next = 0; next < K; next++){
+				long nextMask = 1 << (K - next - 1);
+				// Skip if the bit is 1, because the element does not need to be added twice
+				if(mask & nextMask) continue;
+				long newMask = mask | nextMask;
+				long newDistance = dp[mask][last] + distanceMatrix[last][next];
+				long oldDistance = dp[newMask][next];
+
+				dp[newMask][next] = newDistance < oldDistance ? newDistance : oldDistance;
+			}
+		}
+	}
+
+	// Loop over the complete path (paths of form 1 ^ K (where ^ means repetition)) and find the shortest path
+	vector<long>& completePaths = dp[(1 << K) - 1];
+	long min = N * K;
+	for(auto i : completePaths){
+		if(i < min) min = i;
+	}
+
+	if(min < N * K) cout << min;
+	else cout << -1;
 
 	return 0;
 }
