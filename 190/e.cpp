@@ -108,7 +108,7 @@ int main(){
 	}
 
 	// Display result
-	cout << (min < INF) ? min : -1;
+	cout << ((min < INF) ? min : -1);
 
 	return 0;
 }
