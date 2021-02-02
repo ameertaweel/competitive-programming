@@ -27,6 +27,8 @@ int main(){
 		return 0;
 	}
 
+	long INF = N * K;
+
 	vector<long> importantVerticesIndexes(K);
 	for(auto& c : importantVerticesIndexes){
 		cin >> c;
@@ -38,7 +40,7 @@ int main(){
 
 	for(long i = 0; i < K; i++){
 		// Distances from each important vertex
-		vector<long> dist(N, (N * K));
+		vector<long> dist(N, INF);
 
 		auto vertexIndex = importantVerticesIndexes[i];
 		auto vertex = graph[vertexIndex];
@@ -68,7 +70,7 @@ int main(){
 
 	// Use Dynamic Programming (DP) and Bitmasks to find the shortest path, if exists
 	// N * K here is infinity, because a real path can't be that long
-	vector<vector<long>> dp(1 << K, vector<long>(K, N * K));
+	vector<vector<long>> dp(1 << K, vector<long>(K, INF));
 
 	// We do not care about the bitmask 0^K (where ^ means repetition), so we start enumerating from 1
 	// Initialize the states 2^i for i between 0 and K - 1 to be 1 (because we only added one stone so far)
@@ -81,32 +83,32 @@ int main(){
 	for(long mask = 1; mask < (1 << K) - 1; mask++){
 		// Loop over the mask and find all possible last elements (if the bit is set (equal to 1))
 		for(long last = 0; last < K; last++){
-			long lastMask = 1 << (K - last - 1);
+			long lastBitMask = 1 << (K - last - 1);
 			// Skip if the bit is 0
-			if(!(mask & lastMask)) continue;
+			if(!(mask & lastBitMask)) continue;
 			// Loop over all the possible continuations
 			for(long next = 0; next < K; next++){
-				long nextMask = 1 << (K - next - 1);
+				long nextBitMask = 1 << (K - next - 1);
 				// Skip if the bit is 1, because the element does not need to be added twice
-				if(mask & nextMask) continue;
-				long newMask = mask | nextMask;
+				if(mask & nextBitMask) continue;
+				long nextBitAddedMask = mask | nextBitMask;
 				long newDistance = dp[mask][last] + distanceMatrix[last][next];
-				long oldDistance = dp[newMask][next];
+				long oldDistance = dp[nextBitAddedMask][next];
 
-				dp[newMask][next] = newDistance < oldDistance ? newDistance : oldDistance;
+				dp[nextBitAddedMask][next] = newDistance < oldDistance ? newDistance : oldDistance;
 			}
 		}
 	}
 
 	// Loop over the complete path (paths of form 1 ^ K (where ^ means repetition)) and find the shortest path
 	vector<long>& completePaths = dp[(1 << K) - 1];
-	long min = N * K;
+	long min = INF;
 	for(auto i : completePaths){
 		if(i < min) min = i;
 	}
 
-	if(min < N * K) cout << min;
-	else cout << -1;
+	// Display result
+	cout << (min < INF) ? min : -1;
 
 	return 0;
 }
