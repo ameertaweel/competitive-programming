@@ -47,9 +47,11 @@ int main(){
 		auto& city = citiesToCheck.front();
 		citiesToCheck.pop();
 		bool found = false;
+		bool allVisited = true;
 		counter++;
 		for(auto& connectedCityIndex : city -> connections){
 			auto& connectedCity = graph[connectedCityIndex];
+			if(!connectedCity.visited) allVisited =  false;
 			if(connectedCityIndex == cities[counter] && !connectedCity.visited){
 				connectedCity.comingFrom = city -> index;
 				citiesToCheck.push(&connectedCity);
@@ -59,7 +61,7 @@ int main(){
 			}
 		}
 		if(!found) {
-			if(city -> comingFrom != -1){
+			if(allVisited && city -> comingFrom != -1){
 				auto& previous = graph[city -> comingFrom];
 				citiesToCheck.push(&previous);
 				counter--;
