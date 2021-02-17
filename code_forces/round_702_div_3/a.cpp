@@ -17,27 +17,23 @@ int main(){
 		int n;
 		cin >> n;
 
-		vector<int> a(n);
-
 		int steps = 0;
 		int prev_element;
 		int current_element;
 		cin >> prev_element;
-		bool read_next = true;
+		n--;
 		while(n--){
-			if(read_next) cin >> current_element;
+			cin >> current_element;
 			int max_element = max(prev_element, current_element);
 			int min_element = min(prev_element, current_element);
 
-			if(max_element / min_element > 2){
-				current_element = max_element / min_element + (max_element % min_element ? 1 : 0);
-				steps++;
-				read_next = false;
-			} else {
-				prev_element = current_element;
-				read_next = true;
+			if((double) max_element / min_element > 2){
+				while(min_element * 2 < max_element) steps++, min_element *= 2;
 			}
+
+			prev_element = current_element;
 		}
+
 		cout << steps << "\n";
 	}
 
