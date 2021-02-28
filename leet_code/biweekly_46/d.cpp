@@ -26,39 +26,53 @@ public:
 			g[edge[1]].push_back(edge[0]);
 		}
 
-		vector<vector<int>> parents(n, vector<int>{});
 		vector<bool> visited(n);
-		queue<int> q;
-		q.push(0);
+		deque<int> d;
+		d.push_back(0);
 		visited[0] = true;
 
-		while(!q.empty()){
-			auto& node_children = g[q.front()];
-			auto& node_parents = parents[q.front()];
-
-			for(auto& child : node_children){
-				if(visited[child]) continue;
-				for(auto& parent : node_parents) parents[child].push_back(parent);
-				parents[child].insert(parents[child].begin(), q.front());
-				q.push(child);
-				visited[child] = true;
-			}
-
-			q.pop();
-		}
-
-		int i = 0;
+		vector<int> last_visited_children(n, 0);
+		unordered_map<int, stack<int>> parents_values;
+		vector<int> parents_values_indexes(n, 0);
+		unordered_map<string, int> gcds;
 		vector<int> result(n, -1);
-		for(auto& node_parents : parents){
-			auto& node_val = nums[i];
-			for(auto& parent : node_parents){
-				auto& parent_val = nums[parent];
-				if(__gcd(node_val, parent_val) == 1){
-					result[i] = parent;
-					break;
+
+		int next_parent_index = -1;
+		while(!d.empty()){
+			auto& node_index = d.back();
+			auto& node = g[node_index];
+			parents_values[nums[node_index]].push(node_index);
+			next_parent_index++;
+			parents_values_indexes[node_index] = next_parent_index;
+
+			bool found_unvisited_child = false;
+			int last_visited_child_index = last_visited_children[node_index];
+			for(; last_visited_child_index < node.size(); last_visited_child_index++){
+				int child = node[last_visited_child_index];
+				if(visited[child]) continue;
+				auto& child_val = nums[child];
+				for(auto& [n, s] : parents_values){
+					if(s.empty()) continue;
+					string key = to_string(child_val) + "," + to_string(n);
+					if(!gcds.count(key)){
+						string reverse_key = to_string(n) + "," + to_string(child_val);
+						int gcd = __gcd(child_val, n);
+						gcds[key] = gcd;
+						gcds[reverse_key] = gcd;
+					}
+					if(gcds[key] == 1 && (result[child] == -1 || parents_values_indexes[s.top()] > parents_values_indexes[result[child]])) result[child] = s.top();
 				}
+				d.push_back(child);
+				visited[child] = true;
+				found_unvisited_child = true;
+				break;
 			}
-			i++;
+			last_visited_children[node_index] = last_visited_child_index;
+			if(!found_unvisited_child) {
+				d.pop_back();
+				parents_values[nums[node_index]].pop();
+				next_parent_index--;
+			}
 		}
 
 		return result;
