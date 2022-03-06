@@ -28,6 +28,15 @@ typedef pair<us, us> pus;
 typedef pair<ui, ui> pui;
 typedef pair<ul, ul> pul;
 
+
+// macros
+#define MAKE_UNSIGNED(n) (static_cast<make_unsigned<decltype(n)>::type>(n))
+#define POPCOUNT(n) (__builtin_popcountll(MAKE_UNSIGNED(n)))
+#define HAS_ODD_PARITY(n) (__builtin_parityll(MAKE_UNSIGNED(n)))
+#define HAS_EVEN_PARITY(n) (!HAS_ODD_PARITY(n))
+#define CLZ(n) (__builtin_clzll(MAKE_UNSIGNED(n)))
+#define CTZ(n) (__builtin_ctzll(MAKE_UNSIGNED(n)))
+
 int main() {
 	// fast io
 	ios::sync_with_stdio(0);
@@ -39,50 +48,29 @@ int main() {
 	il t;
 	cin >> t;
 
-	// 12 factorials
-	il factorials[] = {6, 24, 120, 720, 5040, 40320, 362880, 3628800, 39916800, 479001600, 6227020800, 87178291200};
+	vil factorials;
+	for (il i = 4, f = 6; f < max; f *= i, i++) factorials.push_back(f);
 
-	vil combi;
-	vil combi_n;
-	for (il i = 1; i < (1 << 12); i++) {
-		il sum = 0;
-		il sum_n = 0;
-		for (il j = 0; j < 12; j++) {
-			if (i & (1 << j)) {
-				sum += factorials[j];
-				sum_n++;
-			}
-		}
-		if (sum <= max) {
-			combi.push_back(sum);
-			combi_n.push_back(sum_n);
-		}
+	vector<pil> sums(1 << factorials.size());
+	sums[0] = {0, 0};
+	for (il mask = 1; mask < (1 << factorials.size()); mask++) {
+		il first_bit = CTZ(mask);
+		sums[mask].first = sums[mask ^ (1 << first_bit)].first + factorials[first_bit];
+		sums[mask].second = POPCOUNT(mask);
 	}
 
 	while (t--) {
 		il n;
 		cin >> n;
 
-		il gain = 0;
-		for (il i = 0; i < (il) combi.size(); i++) {
-			il c = combi[i];
-			if (c > n) continue;
-			il shared = 0;
-			for (il j = 1; j < max; j *= 2){
-				if (c & n & j) shared++;
-			}
-			il cur_gain = shared - combi_n[i];
-			if (cur_gain > gain) {
-				gain = cur_gain;
-			}
-		}
-		il answ = 0;
-		for (il i = 1; i <= max; i *= 2){
-			if (n & i) answ++;
-		}
-		answ -= gain;
+		il result = POPCOUNT(n);
 
-		cout << answ << "\n";
+		for (auto i : sums) {
+			if (i.first > n) continue;
+			result = min(result, i.second + POPCOUNT(n - i.first));
+		}
+
+		cout << result << "\n";
 	}
 
 	return 0;
