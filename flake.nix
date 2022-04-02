@@ -9,7 +9,11 @@
 	in {
 		devShell = pkgs.mkShell {
 			nativeBuildInputs = with pkgs; [
+				# C / C++
 				gcc
+
+				# Python
+				python3
 			];
 			buildInputs = [ ];
 		};
