@@ -44,23 +44,23 @@ using pul = pair<ul, ul>;
 
 class Solution {
 public:
-    int maxArea(vector<int>& height) {
-        il n = height.size();
-        vector<pil> h(n);
-        for (il i = 0; i < n; i++) h[i] = {height[i], i};
-        SORT_STD_DEC(h);
-        
-        il start = min(h[0].second, h[1].second);
-        il end = max(h[0].second, h[1].second);
-        il max_water = h[1].first * (end - start);
-        for (auto [val, i] : h) {
-            if (i >= start && i <= end) continue;
-            if (i < start) start = i;
-            else end = i;
-            il water = val * (end - start);
-            if (water > max_water) max_water = water;
-        }
-        
-        return max_water;
-    }
+	int maxArea(vector<int>& height) {
+		il n = height.size();
+		vector<pil> h(n);
+		for (il i = 0; i < n; i++) h[i] = {height[i], i};
+		SORT_STD_DEC(h);
+		
+		il start = min(h[0].second, h[1].second);
+		il end = max(h[0].second, h[1].second);
+		il max_water = h[1].first * (end - start);
+		for (auto [val, i] : h) {
+			if (i >= start && i <= end) continue;
+			if (i < start) start = i;
+			else end = i;
+			il water = val * (end - start);
+			if (water > max_water) max_water = water;
+		}
+		
+		return max_water;
+	}
 };
