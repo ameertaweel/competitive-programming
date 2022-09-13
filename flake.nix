@@ -9,14 +9,22 @@
 	in {
 		devShell = pkgs.mkShell {
 			nativeBuildInputs = with pkgs; [
-				# C / C++
+				# Notes
+
+				texlive.combined.scheme-medium
+
+				# Code
+
+				## C / C++
 				gcc
 
-				# Python
+				## Python
 				python3
+
+				## Kotlin
+				kotlin
 			];
 			buildInputs = [ ];
 		};
 	});
 }
-
