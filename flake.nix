@@ -6,25 +6,26 @@
 	outputs = { self, nixpkgs, flake-utils }:
 	flake-utils.lib.eachDefaultSystem (system: let
 		pkgs = nixpkgs.legacyPackages.${system};
+		tex-env = pkgs.texlive.combine {
+			inherit (pkgs.texlive) scheme-full latex-bin latexmk;
+		};
 	in {
 		devShell = pkgs.mkShell {
 			nativeBuildInputs = with pkgs; [
-				# Notes
-
-				texlive.combined.scheme-medium
-
-				# Code
-
-				## C / C++
+				# C / C++
 				gcc
 
-				## Python
+				# Python
 				python3
 
-				## Kotlin
+				# Kotlin
 				kotlin
+
+				# LaTeX Documents
+				tex-env
+				python39Packages.pygments # For the minted package
 			];
-			buildInputs = [ ];
 		};
+		buildInputs = [ ];
 	});
 }

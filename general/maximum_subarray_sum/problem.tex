@@ -1,0 +1,151 @@
+\documentclass[12pt, a4paper]{article}
+
+% paragraphs with larger spacing
+\usepackage{parskip}
+
+% code syntax highlighting
+\usepackage{minted}
+% set syntax highlighting theme
+\usemintedstyle{monokai}
+
+\title{Maximum Subarray Sum Problem}
+\author{AmeerTaweel}
+\date{September 15, 2022}
+
+\begin{document}
+
+\maketitle
+
+\newpage
+
+\tableofcontents
+
+\newpage
+
+\section{Description}
+
+Given an array of $n$ numbers, calculate the maximum subarray sum, which is the
+largest possible sum of a sequence of consecutive values in the array. There may
+be negative numbers in the array. Zero-length subarrays are allowed, so the
+maximum subarray sum is always at least zero.
+
+\section{Input}
+
+The first line of input contains an integer $n$, the number of elements in the
+array.
+
+Then $n$ lines follow, each containing a number.
+
+\begin{listing}[!ht]
+\begin{minted}[bgcolor=black, linenos]{cpp}
+int n;
+cin >> n;
+
+vector<int> arr(n);
+for (int i = 0; i < n; i++) cin >> arr[i];
+\end{minted}
+\caption{Read Input}
+\label{listing:in}
+\end{listing}
+
+\section{Output}
+
+One number, the maximum subarray sum.
+
+\begin{listing}[!ht]
+\begin{minted}[bgcolor=black, linenos]{cpp}
+cout << max_sum;
+\end{minted}
+\caption{Write Output}
+\label{listing:out}
+\end{listing}
+
+\newpage
+
+\section{Solutions}
+
+\subsection{Three Loops}
+
+\subsubsection{Algorithm}
+
+This algorithm coputes the sum for all sequences and then outputs the maximum.
+
+\begin{listing}[!ht]
+\begin{minted}[bgcolor=black, linenos]{cpp}
+int max_sum = 0;
+
+for (int start = 0; start < n; start++) {
+    for (int end = start; end < n; end++) {
+        int sum = 0;
+        // Calculate sum for sequence [start, end]
+        for (int i = start; i <= end; i++) sum += arr[i];
+        if (sum > max_sum) max_sum = sum;
+    }
+}
+\end{minted}
+\caption{Three Loops Algorithm}
+\label{listing:alg-three-loops}
+\end{listing}
+
+\subsubsection{Time Complexity}
+
+The algorithm above has three nested loops that iterate through the output, so
+its time complexity is $O(n^3)$.
+
+\newpage
+
+\subsection{Two Loops}
+
+\subsubsection{Algorithm}
+
+This algorithm improves on the previous one by calculating the sum as the end
+pointer moves. Instead of doing the whole calculation at each step.
+
+\begin{listing}[!ht]
+\begin{minted}[bgcolor=black, linenos]{cpp}
+int max_sum = 0;
+
+for (int start = 0; start < n; start++) {
+    int sum = 0;
+    for (int end = start; end < n; end++) {
+        sum += arr[end];
+        if (sum > max_sum) max_sum = sum;
+    }
+}
+\end{minted}
+\caption{Two Loops Algorithm}
+\label{listing:alg-two-loops}
+\end{listing}
+
+\subsubsection{Time Complexity}
+
+The algorithm above has two nested loops that iterate through the output, so
+its time complexity is $O(n^2)$.
+
+\newpage
+
+\subsection{One Loop - Kadane's Algorithm}
+
+\subsubsection{Algorithm}
+
+\begin{listing}[!ht]
+\begin{minted}[bgcolor=black, linenos]{cpp}
+int max_sum = 0;
+
+int sum = 0;
+for (int i = 0; i < n; i++) {
+    if (sum < 0) sum = 0;
+    sum += arr[i];
+    if (sum > max_sum) max_sum = sum;
+}
+\end{minted}
+\caption{Kadane's Algorithm}
+\label{listing:alg-one-loop}
+\end{listing}
+
+\subsubsection{Time Complexity}
+
+The algorithm above has only one loop that iterate through the output, so its
+time complexity is $O(n)$.
+
+\end{document}
