@@ -18,9 +18,6 @@
 				# Python
 				python3
 
-				# Kotlin
-				kotlin
-
 				# LaTeX Documents
 				tex-env
 				python39Packages.pygments # For the minted package
