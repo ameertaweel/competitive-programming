@@ -18,9 +18,12 @@
 				# Python
 				python3
 
+				# Rust
+				rustc
+
 				# LaTeX Documents
-				tex-env
-				python39Packages.pygments # For the minted package
+				# tex-env
+				# python39Packages.pygments # For the minted package
 			];
 		};
 		buildInputs = [ ];
