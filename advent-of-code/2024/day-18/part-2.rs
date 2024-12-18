@@ -20,9 +20,15 @@ fn main() {
     }
     let bytes = bytes;
 
-    let mut is_corrupt: Vec<Vec<bool>> = vec![vec![false; GRID_SIZE as usize]; GRID_SIZE as usize];
-    for (row, col) in bytes.iter() {
-        is_corrupt[*row as usize][*col as usize] = true;
+    let mut start = 0;
+    let mut end   = bytes.len() - 1;
+    while (end - start) > 1 {
+        let check = start + ((end - start) / 2);
+
+        let mut is_corrupt: Vec<Vec<bool>> = vec![vec![false; GRID_SIZE as usize]; GRID_SIZE as usize];
+        for (row, col) in bytes.iter().take(check + 1) {
+            is_corrupt[*row as usize][*col as usize] = true;
+        }
 
         let mut stack: VecDeque<(i64, i64, i64)> = VecDeque::new();
         stack.push_back((0, 0, 0));
@@ -51,11 +57,15 @@ fn main() {
             }
         }
 
-        if !path_found {
-            println!("{},{}", row, col);
-            break;
+        if path_found {
+            start = check;
+        } else {
+            end = check;
         }
     }
+
+    let (row, col) = bytes[end];
+    println!("{},{}", row, col);
 }
 
 fn within_grid(pos: &(i64, i64), rows: i64, cols: i64) -> bool {
