@@ -1,0 +1,58 @@
+# RAW INPUT
+
+Register A: 51571418
+Register B: 0
+Register C: 0
+
+Program: 2,4,1,1,7,5,0,3,1,4,4,5,5,5,3,0
+
+################################################################################
+
+# ASSEMBLY-LIKE
+
+A = ?
+B = 0
+C = 0
+
+LABEL:
+B = A MOD 8
+B = B XOR 1
+C = A DIV (2 POW B)
+A = A DIV (2 POW 3)
+B = B XOR 4
+B = B XOR C
+PRINT(B MOD 8)
+IF A != 0 JMP LABEL
+
+################################################################################
+
+# C-LIKE
+
+Assume A is a bitstring of arbitrary size
+
+0 -> for (A = ?; A != 0; A = A / 8) { # Remove last three bits of A
+1 -> 	SHOULD OUTPUT -> X
+2 -> 	LOCAL B # bitstring of size 3
+3 -> 	B = A[-3:]
+4 -> 	B = FLIP B[2]
+5 -> 	B = B ^ (A >> B) # Remove last B bits (0 - 7) from A
+6 -> 	B = FLIP B[0]
+7 -> 	PRINT(B)
+8 -> }
+
+################################################################################
+
+# Analysis
+
+Each iteration uses 3 to 10 of A's least significant bits.
+
+Each iteration, A's 3 least significant bits are removed.
+
+Program length is 16. Therefore, we need exactly 16 iterations.
+
+Therefore: A is a 55-bit number (3 * 15 + 10).
+
+In the last iteration, only the 10 most significant bits matter. So if the last
+output for some initial A is incorrect, this is the next initial A we check:
+
+A' = ((A >> 45) + 1) << 45;
