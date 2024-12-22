@@ -1,3 +1,10 @@
+// +------+
+// | NOTE |
+// +------+
+//
+// My Solution To Part 1 Is Wrong. It Worked By Chance.
+// For Correct Values In All Cases: Run Part 2 Code With `LEVELS = 2`.
+
 use std::io::{self, BufRead};
 
 fn main() {

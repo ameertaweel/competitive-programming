@@ -1,6 +1,8 @@
 use std::collections::HashMap;
 use std::io::{self, BufRead};
 
+const LEVELS: u64 = 25;
+
 fn main() {
     let stdin = io::stdin();
 
@@ -105,7 +107,7 @@ fn recursive_directional_count(
         _  => panic!("Invalid Directional Pattern"),
     };
 
-    if level == 26 { return (1, row_next, col_next); }
+    if level == LEVELS + 1 { return (1, row_next, col_next); }
 
     if cache.contains_key(&(el, row_curr, col_curr, level)) {
         return (*cache.get(&(el, row_curr, col_curr, level)).unwrap(), row_next, col_next);
