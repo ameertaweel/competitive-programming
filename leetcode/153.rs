@@ -5,7 +5,6 @@ impl Solution {
 
         while i < j {
             let mid = i + (j - i) / 2;
-            println!("{}, {}, {}", i, mid, j);
 
             if mid > 0 && nums[mid - 1] > nums[mid] {
                 return nums[mid];
