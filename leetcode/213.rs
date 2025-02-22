@@ -1,9 +1,24 @@
-// LeetCode/198 - House Robber
+// LeetCode/213 - House Robber II
 
 use std::cmp::max;
 
 impl Solution {
     pub fn rob(nums: Vec<i32>) -> i32 {
+        if nums.len() == 0 {
+            return 0;
+        }
+        if nums.len() == 1 {
+            return nums[0];
+        }
+
+        return max(
+            Self::rob_linear(&nums[1..]),
+            Self::rob_linear(&nums[..(nums.len() - 1)]),
+        );
+    }
+
+    // My Solution For LeetCode/198 (House Robber)
+    pub fn rob_linear(nums: &[i32]) -> i32 {
         if nums.len() == 0 {
             return 0;
         }
