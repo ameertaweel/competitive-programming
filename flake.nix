@@ -21,6 +21,9 @@
 				# Rust
 				rustc
 
+				# Zig
+				zig
+
 				# LaTeX Documents
 				# tex-env
 				# python39Packages.pygments # For the minted package
