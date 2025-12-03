@@ -27,9 +27,7 @@ pub fn main() !void {
 
                 if (digit > joltages[j]) {
                     joltages[j] = digit;
-                    for ((j + 1)..BATTERIES_PER_BANK) |k| {
-                        joltages[k] = -1;
-                    }
+                    if (j + 1 < BATTERIES_PER_BANK) joltages[j + 1] = -1;
                     break;
                 }
             }
