@@ -1,4 +1,6 @@
-**/out
-**/in
-.direnv
-.ccls-cache
+# Direnv Cache
+/.direnv/
+
+# CCLS Cache
+/.ccls-cache/
+
