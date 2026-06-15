@@ -23,6 +23,7 @@
 
       # Rust
       pkgs.rustc
+      pkgs.rustfmt
 
       # Zig
       pkgs.zig
